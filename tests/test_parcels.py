@@ -233,6 +233,23 @@ def test_normalize_warns_once_on_unconfirmed_delivery_point_type(caplog):
     assert "issues/new" in caplog.text
 
 
+def test_normalize_warns_once_on_unparseable_delivery_date(caplog):
+    """Pre-release: an ETA date we cannot parse would silently become None, so
+    an unrecognised format self-reports for us to confirm."""
+    raw = active_sample()
+    raw["estimatedDelivery"] = {"date": "29.04.2026"}
+    normalize_parcel(raw)
+    normalize_parcel(raw)
+    assert caplog.text.count("29.04.2026") == 1
+    assert "issues/new" in caplog.text
+
+
+def test_normalize_valid_delivery_date_is_silent(caplog):
+    """A parseable ETA date never triggers the format warning."""
+    normalize_parcel(active_sample())
+    assert "estimatedDelivery.date" not in caplog.text
+
+
 def test_normalize_pending_placeholder():
     """A tracked-but-not-yet-scanned code still yields a full parcel dict."""
     parcel = normalize_parcel({"trackingNumber": "TESTHJEM00000009"})

@@ -93,8 +93,9 @@ def _warn_unmapped_status(code: str) -> None:
 #    above already reports any value missing from ``_STATUS_MAP``);
 #  * ``DeliveryPointType`` — the delivery-point kind, which may be a cleaner
 #    pickup signal than the status alone;
-#  * the ``estimatedDelivery.date`` format, and whether the response's
-#    ``trackingNumber`` matches the reference the user entered.
+#  * the ``estimatedDelivery.date`` format — an unparseable value would silently
+#    become ``None``, so normalize_parcel warns when it cannot parse a present
+#    date.
 #
 # Each distinct observed value is logged **once** at WARNING with the issue
 # link, so a user with a real Helthjem parcel can report it and grow the maps.
@@ -299,7 +300,13 @@ def normalize_parcel(raw: dict, *, include_history: bool = False) -> dict:
     # Helthjem reports a single estimated-delivery *date*, not a window, so
     # ``planned_to`` stays ``None`` (a point estimate).
     eta = raw.get("estimatedDelivery") or {}
-    planned_from = to_iso_timestamp(eta.get("date"))
+    eta_date = eta.get("date")
+    planned_from = to_iso_timestamp(eta_date)
+    # Pre-release: the date *format* is unconfirmed. If a value is present but we
+    # cannot parse it, it would silently become ``None`` — warn so a real parcel
+    # tells us the real format (see _warn_observed_value).
+    if eta_date and parse_iso(planned_from) is None:
+        _warn_observed_value("estimatedDelivery.date", eta_date)
 
     # No top-level delivered timestamp — take it from the delivered event.
     delivered_at = _delivered_at(raw.get("events")) if delivered else None

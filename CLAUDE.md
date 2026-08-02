@@ -53,7 +53,9 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
 - **Provisional (pre-1.0):** the status vocabulary is a best-effort guess
   collected via one-shot WARNINGs (introspection is off); `DeliveryPointType`
   values are logged too since one may be a cleaner pickup signal than the status.
-  Confirm once a real parcel is observed end to end.
+  The `estimatedDelivery.date` **format** is unconfirmed — a value we can't parse
+  would silently become `None`, so `normalize_parcel` logs a one-shot WARNING when
+  a present date fails to parse. Confirm once a real parcel is observed end to end.
 
 ## Options and reloads — account-less model
 
