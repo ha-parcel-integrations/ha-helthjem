@@ -49,7 +49,8 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
   non-null object for an unknown reference, making it a poor not-found signal.
   Revisit if weight/dimensions become worth a second call. `sender`/`receiver`/
   `weight`/`dimensions` stay `None`; `planned_from` is a single date (`planned_to`
-  always `None`).
+  always `None`). Reflected in `const.py`'s `CAPABILITIES` (feeds the docs
+  site's comparison table) — keep the two in agreement if that ever changes.
 - **Provisional (pre-1.0):** the status vocabulary is a best-effort guess
   collected via one-shot WARNINGs (introspection is off); `DeliveryPointType`
   values are logged too since one may be a cleaner pickup signal than the status.
