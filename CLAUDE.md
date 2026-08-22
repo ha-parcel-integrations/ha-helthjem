@@ -22,7 +22,7 @@ you act in one of these areas:
 | consider "fixing" a lint/pattern the skill flags (poll interval, inline client) | *Deliberate skill divergences* |
 | commit, bump, tag, release, or write release notes; add a feature without a test | *Workflow / Commits / Versioning / Testing* |
 
-**API mechanics live in `carrier-research/api/helthjem/` (private research repo)** — the keyless
+**API mechanics live in `carrier-research/helthjem/api/` (private research repo)** — the keyless
 GraphQL endpoint, the `getParcelTrackingDetails` query, the not-found-vs-error
 signalling, the payload→canonical mapping and the `EventStatusType` vocabulary. Do
 not duplicate them here.
@@ -43,7 +43,7 @@ Helthjem is a Norwegian home-delivery carrier (Amedia's newspaper network) that
 webshops pick at checkout; overlaps with Bring/Posten and PostNord.
 
 - **The GraphQL query was reconstructed by probing the live schema** (introspection
-  is disabled) — see `carrier-research/api/helthjem/` before extending it; extend it the same way.
+  is disabled) — see `carrier-research/helthjem/api/` before extending it; extend it the same way.
 - **We deliberately use the leaner `getParcelTrackingDetails`, not
   `getParcelDetails`** — the latter carries weight/dimensions but returns a
   non-null object for an unknown reference, making it a poor not-found signal.
@@ -97,5 +97,5 @@ python -m pytest tests/ --cov=custom_components.helthjem
 
 Coverage must stay **above 95%** (silver `test-coverage` rule). Run before
 committing. A code change updates the README + this file in the same commit;
-the API reference now lives in the private `carrier-research/api/helthjem/`,
+the API reference now lives in the private `carrier-research/helthjem/api/`,
 not in this repo.
