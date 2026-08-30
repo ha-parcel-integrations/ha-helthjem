@@ -19,7 +19,7 @@ you act in one of these areas:
 | touch entities, sensors, config/options flow, coordinator, diagnostics, translations | *Home Assistant developer docs* (its table points on to the canonical HA page — don't rely on memory) |
 | add/rename a parcel field, a `ParcelStatus`, or a bus event; change the sort/first-refresh; touch unmapped-status logging | *Parcel contract* — key set, units, sort, events + suppression; `test_parcels.py::test_normalize_publishes_exactly_the_canonical_keys` guards the key set |
 | ship anything while below 1.0.0 (reconstructed, no real parcel) | *Pre-1.0 releases* — one-shot WARNINGs for every guessed enum/shape |
-| consider "fixing" a lint/pattern the skill flags (poll interval, inline client) | *Deliberate skill divergences* |
+| consider "fixing" a lint/pattern the skill flags (inline client) | *Deliberate skill divergences* |
 | commit, bump, tag, release, or write release notes; add a feature without a test | *Workflow / Commits / Versioning / Testing* |
 
 **API mechanics live in `carrier-research/helthjem/api/` (private research repo)** — the keyless
@@ -61,11 +61,24 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
 ## Options and reloads — account-less model
 
 The options flow is one sectioned form; changes apply without a restart.
-Account-less carriers (this one) use the **update-listener** model (retunes
-`coordinator.update_interval` + `async_request_refresh()`). Account-based carriers
-instead call `async_schedule_reload` with **no** listener (combining the two is
-deprecated, error in HA 2026.12+). The user-tunable poll interval is a deliberate
-HACS divergence (see CONVENTIONS.md).
+Account-less carriers (this one) use the **update-listener** model — the
+listener just calls `async_request_refresh()`. Account-based carriers instead
+call `async_schedule_reload` with **no** listener (combining the two is
+deprecated, error in HA 2026.12+).
+
+## Dynamic, status-driven polling
+
+Unconditional — there is no user-facing interval option. `coordinator.py`
+recomputes `update_interval` at the end of every refresh: 15 min ("hot") when
+a tracked, not-yet-delivered parcel is `out_for_delivery` within an hour of
+its estimated delivery time (or has none at all), 45 min ("mid") otherwise,
+and `None` (fully suspended) when nothing is tracked or everything tracked is
+delivered — polling resumes the moment `_async_options_updated` sees a parcel
+added back. No polling at all between 00:00–06:00 local time except the two
+daily anchor checks, plus a small per-entry stagger so installs don't all
+poll on the same second. See `carrier-research/dynamic-polling.md` for the
+full algorithm and `ha-carrier-template`'s `coordinator.py` for the reference
+shape this mirrors.
 
 ## Module layout
 

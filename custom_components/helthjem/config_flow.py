@@ -21,14 +21,11 @@ from .const import (
     CONF_DELIVERED_FILTER_TYPE,
     CONF_INCLUDE_HISTORY,
     CONF_PARCELS,
-    CONF_REFRESH_INTERVAL,
     CONF_TRACKING_CODE,
     DEFAULT_DELIVERED_FILTER_AMOUNT,
     DEFAULT_DELIVERED_FILTER_TYPE,
     DEFAULT_INCLUDE_HISTORY,
-    DEFAULT_REFRESH_INTERVAL,
     DOMAIN,
-    REFRESH_INTERVAL_OPTIONS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,17 +59,6 @@ def valid_tracking_code(value: str) -> bool:
 def _current_parcels(entry: ConfigEntry) -> list[dict[str, str]]:
     """Return a mutable copy of the tracked parcels list."""
     return [dict(item) for item in entry.options.get(CONF_PARCELS, [])]
-
-
-def _interval_selector() -> selector.SelectSelector:
-    """Return the refresh-interval dropdown selector (options translated via strings)."""
-    return selector.SelectSelector(
-        selector.SelectSelectorConfig(
-            options=[str(m) for m in REFRESH_INTERVAL_OPTIONS],
-            translation_key=CONF_REFRESH_INTERVAL,
-            mode=selector.SelectSelectorMode.DROPDOWN,
-        )
-    )
 
 
 class HelthjemConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -110,7 +96,6 @@ class HelthjemConfigFlow(ConfigFlow, domain=DOMAIN):
                 CONF_PARCELS: [],
                 CONF_DELIVERED_FILTER_TYPE: DEFAULT_DELIVERED_FILTER_TYPE,
                 CONF_DELIVERED_FILTER_AMOUNT: DEFAULT_DELIVERED_FILTER_AMOUNT,
-                CONF_REFRESH_INTERVAL: DEFAULT_REFRESH_INTERVAL,
                 CONF_INCLUDE_HISTORY: DEFAULT_INCLUDE_HISTORY,
             },
         )
@@ -120,9 +105,9 @@ class HelthjemOptionsFlowHandler(OptionsFlow):
     """Manage tracked parcels, history and polling in one sectioned form.
 
     Mirrors the other suite carriers' section layout (here: ``parcels`` /
-    ``delivered`` / ``history`` / ``polling``). Changes apply live via HA's
-    options-update listener (which refreshes the coordinator), so new/removed
-    per-parcel sensors appear and disappear immediately.
+    ``delivered`` / ``history``). Changes apply live via HA's options-update
+    listener (which refreshes the coordinator), so new/removed per-parcel
+    sensors appear and disappear immediately.
     """
 
     async def async_step_init(
@@ -189,7 +174,6 @@ class HelthjemOptionsFlowHandler(OptionsFlow):
                         user_input[CONF_DELIVERED_FILTER_AMOUNT]
                     ),
                     CONF_INCLUDE_HISTORY: bool(user_input[CONF_INCLUDE_HISTORY]),
-                    CONF_REFRESH_INTERVAL: int(user_input[CONF_REFRESH_INTERVAL]),
                 },
             )
 
@@ -227,12 +211,6 @@ class HelthjemOptionsFlowHandler(OptionsFlow):
                             CONF_INCLUDE_HISTORY, DEFAULT_INCLUDE_HISTORY
                         ),
                     ): selector.BooleanSelector(),
-                    vol.Required(
-                        CONF_REFRESH_INTERVAL,
-                        default=str(
-                            current.get(CONF_REFRESH_INTERVAL, DEFAULT_REFRESH_INTERVAL)
-                        ),
-                    ): _interval_selector(),
                 }
             ),
         )

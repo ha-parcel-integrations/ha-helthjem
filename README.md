@@ -19,6 +19,7 @@ Part of the [ha-parcel-integrations](https://github.com/ha-parcel-integrations) 
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Options](#options)
+- [Dynamic polling](#dynamic-polling)
 - [Removal](#removal)
 - [Sensors](#sensors)
 - [Parcel status reference](#parcel-status-reference)
@@ -76,7 +77,26 @@ Open **Configure** on the integration entry:
 | Parcels | Add / remove | — | Manage the tracked tracking codes. Changes apply immediately, no restart. |
 | Delivered parcels | Filter by / amount | last 7 days | How long delivered parcels stay visible on the delivered sensor. |
 | Parcel history | Include status history | off | Adds a `history` attribute per parcel with each status update. |
-| Polling | Refresh every | 30 min | How often Helthjem is checked. Slower is gentler on their API. |
+
+## Dynamic polling
+
+Instead of polling Helthjem at the same rate around the clock, the integration
+adjusts its own cadence to what your tracked parcels are actually doing:
+
+- **Quiet hours** — no polling between 00:00–06:00 local time, aside from one
+  catch-up check at each end of that window (around midnight and around 6
+  AM).
+- **Hot (every 15 min)** — at least one tracked, not-yet-delivered parcel is
+  `out_for_delivery`, starting an hour before its estimated delivery time (or
+  immediately if no time is known).
+- **Mid (every 45 min)** — anything else still in flight (registered, in
+  transit, at a pickup point, or an exception).
+- **Fully stopped** — nothing is tracked, or every tracked parcel has been
+  delivered. Polling resumes immediately the moment a parcel is tracked
+  again, via the options flow, the `track_parcel` service, or a dashboard
+  button.
+- A small, fixed per-hub offset is added on top, so not every Helthjem hub
+  out there polls at exactly the same second.
 
 ## Removal
 
@@ -176,7 +196,7 @@ statuses and events.
 
 ## Disclaimer
 
-This integration uses the same public tracking endpoint as the Helthjem consumer website. It is not affiliated with, endorsed by, or supported by Helthjem. Be gentle with the polling interval.
+This integration uses the same public tracking endpoint as the Helthjem consumer website. It is not affiliated with, endorsed by, or supported by Helthjem.
 
 ## Contributing
 

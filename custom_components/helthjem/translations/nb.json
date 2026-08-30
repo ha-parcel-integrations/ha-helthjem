@@ -45,15 +45,6 @@
             "data_description": {
               "include_history": "Legger til et historikkattributt per pakke som lister hver statusoppdatering (tidspunkt, status, opprinnelig tekst). Av som standard."
             }
-          },
-          "polling": {
-            "name": "Oppdatering",
-            "data": {
-              "refresh_interval": "Oppdater hvert"
-            },
-            "data_description": {
-              "refresh_interval": "Hvor ofte integrasjonen sjekker Helthjem for pakkeoppdateringer. Et lengre intervall er skånsomt mot Helthjems API; standarden på 30 minutter er mer enn nok for de fleste pakker."
-            }
           }
         },
         "menu_options": {
@@ -72,8 +63,7 @@
         "data": {
           "delivered_filter_type": "Levererte pakker: filtrer etter",
           "delivered_filter_amount": "Levererte pakker: antall",
-          "include_history": "Inkluder statushistorikk",
-          "refresh_interval": "Oppdater hver"
+          "include_history": "Inkluder statushistorikk"
         }
       }
     },
@@ -83,15 +73,6 @@
     }
   },
   "selector": {
-    "refresh_interval": {
-      "options": {
-        "15": "15 minutter",
-        "30": "30 minutter",
-        "60": "60 minutter",
-        "120": "120 minutter",
-        "240": "240 minutter"
-      }
-    },
     "delivered_filter_type": {
       "options": {
         "days": "Dager",
