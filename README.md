@@ -46,7 +46,6 @@ Part of the [ha-parcel-integrations](https://github.com/ha-parcel-integrations) 
 
 ## Requirements
 
-- Home Assistant 2024.12 or newer
 - A Helthjem parcel and its reference number (from the shipping
   confirmation email) — no account needed
 
