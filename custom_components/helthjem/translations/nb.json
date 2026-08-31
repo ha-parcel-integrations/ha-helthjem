@@ -53,7 +53,7 @@
         }
       },
       "parcels": {
-        "title": "Pakker",
+        "title": "Administrer pakker",
         "data": {
           "tracking_codes": "Sporingskoder"
         }
