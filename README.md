@@ -37,7 +37,7 @@ Part of the [ha-parcel-integrations](https://github.com/ha-parcel-integrations) 
 
 - Track any number of Helthjem parcels by tracking code — no account needed
 - Per-parcel sensor with the canonical status (`registered` / `in_transit` / `out_for_delivery` / `delivered` / …), Helthjem's own status code, the estimated delivery date and a tracking deep-link
-- Summary sensors: incoming parcels, next delivery, recently delivered parcels
+- Summary sensors: incoming parcels, next delivery, parcels awaiting pickup, recently delivered parcels
 - Read-only **Deliveries** calendar with the estimated delivery dates
 - `helthjem.track_parcel` / `helthjem.untrack_parcel` services, so a dashboard button can add a parcel
 - Events + device triggers for no-code automations (parcel registered, status changed, delivered, delivery time changed)
@@ -108,6 +108,7 @@ Standard HA removal applies: **Settings → Devices & Services → Helthjem → 
 | `sensor.helthjem_incoming_parcels` | Number of active tracked parcels, full list under the `parcels` attribute |
 | `sensor.helthjem_parcel_<code>` | One per tracked parcel; state is the canonical status, attributes carry the full normalised parcel |
 | `sensor.helthjem_next_delivery` | Earliest expected delivery moment across all active parcels |
+| `sensor.helthjem_awaiting_pickup` | Number of parcels currently waiting to be collected (`at_pickup_point`), full list under the `parcels` attribute |
 | `sensor.helthjem_delivered_parcels` | Recently delivered parcels (see the retention option) |
 | `sensor.helthjem_last_successful_update` | Diagnostic: when Helthjem was last polled successfully |
 
