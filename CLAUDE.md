@@ -27,6 +27,12 @@ GraphQL endpoint, the `getParcelTrackingDetails` query, the not-found-vs-error
 signalling, the payload→canonical mapping and the `EventStatusType` vocabulary. Do
 not duplicate them here.
 
+**Structure, options flow, dynamic polling and module layout are suite-wide**
+and identical in every carrier — the authoritative spec is
+[`ha-carrier-template/scaffold/CLAUDE.md`](https://github.com/ha-parcel-integrations/ha-carrier-template/blob/main/scaffold/CLAUDE.md).
+Where this repo diverges from it, that is recorded below under
+*Divergences from the scaffold*.
+
 **Suite-wide tripwires, kept inline on purpose:**
 - **First refresh in `__init__.py`, before `async_forward_entry_setups`** — from
   a forwarded platform HA can't catch `ConfigEntryNotReady` and half-sets-up the
@@ -58,14 +64,6 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
   would silently become `None`, so `normalize_parcel` logs a one-shot WARNING when
   a present date fails to parse. Confirm once a real parcel is observed end to end.
 
-## Options and reloads — account-less model
-
-The options flow is one sectioned form; changes apply without a restart.
-Account-less carriers (this one) use the **update-listener** model — the
-listener just calls `async_request_refresh()`. Account-based carriers instead
-call `async_schedule_reload` with **no** listener (combining the two is
-deprecated, error in HA 2026.12+).
-
 ## Dynamic, status-driven polling
 
 Unconditional — there is no user-facing interval option. `coordinator.py`
@@ -80,27 +78,13 @@ poll on the same second. See `carrier-research/dynamic-polling.md` for the
 full algorithm and `ha-carrier-template`'s `coordinator.py` for the reference
 shape this mirrors.
 
-## Module layout
+## Divergences from the scaffold
 
-| File | Carrier-specific? |
-|---|---|
-| `api.py` (GraphQL client, error types) | **yes** |
-| `const.py` (domain, URLs, `TRACKING_QUERY`, `ParcelStatus`, option keys) | partly (URLs, query) |
-| `parcels.py` (status map, `normalize_parcel`, history, sort, filters — pure, no I/O) | partly (`_STATUS_MAP`, `normalize_parcel`) |
-| `coordinator.py` (fetch, cache, event firing) | mostly not |
-| `config_flow.py` | partly (code validation) |
-| `sensor.py` / `button.py` / `calendar.py` / `device_trigger.py` | no |
-| `diagnostics.py` | partly (`TO_REDACT`) |
-| `services.py` (`track_parcel` / `untrack_parcel`) | no |
+Everything not listed here follows the scaffold exactly.
 
-`parcels.py` is free of I/O and HA objects so the per-carrier part stays
-unit-testable. Config: `ConfigEntry.runtime_data` (typed, no `hass.data`),
-`PARALLEL_UPDATES = 0`, coordinator takes `config_entry=entry`. A GraphQL
-`errors` array raises so the coordinator falls back to the cached payload rather
-than dropping the parcel; `aiohttp.ClientError` is not caught around the whole
-update (coordinator wraps it). Entities: `has_entity_name` + `translation_key`,
-`icons.json`, translated units, `_attr_attribution`, `_unrecorded_attributes` on
-anything with a parcel list or `raw`. Over-redact diagnostics.
+*Module layout* — `api.py` is a **GraphQL** client (`TRACKING_QUERY` lives in
+`const.py`), not the stock REST client. A GraphQL `errors` array raises, so the
+coordinator falls back to the cached payload rather than dropping the parcel.
 
 ## Running tests
 
