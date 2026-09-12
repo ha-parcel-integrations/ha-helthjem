@@ -30,17 +30,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# Helthjem's parcel reference, as printed on the shipping confirmation. Its
-# exact format is **not confirmed yet** (this integration was reconstructed
-# without a real parcel), so the pattern stays deliberately generous — upper-case
-# alphanumeric, 6-30 chars — rather than risk rejecting a valid reference. This
-# regex is also what the ``track_parcel`` service and the e-mail-parsing example
-# validate against; a false negative is far more annoying than a bad code that
-# simply returns "not found" on the next poll. Tighten it once the real format
-# is known.
-_TRACKING_CODE_RE = re.compile(r"^[A-Z0-9]{6,30}$")
-
-
 def normalize_tracking_code(value: str) -> str:
     """Return the tracking code upper-cased with separators stripped.
 
@@ -52,8 +41,8 @@ def normalize_tracking_code(value: str) -> str:
 
 
 def valid_tracking_code(value: str) -> bool:
-    """Whether ``value`` looks like a Helthjem tracking code."""
-    return bool(_TRACKING_CODE_RE.match(value))
+    """Accept every non-empty code; Helthjem's real reference format isn't confirmed."""
+    return bool(value)
 
 
 def _current_parcels(entry: ConfigEntry) -> list[dict[str, str]]:
