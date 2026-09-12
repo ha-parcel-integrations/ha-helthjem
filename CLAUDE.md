@@ -74,9 +74,8 @@ and `None` (fully suspended) when nothing is tracked or everything tracked is
 delivered — polling resumes the moment `_async_options_updated` sees a parcel
 added back. No polling at all between 00:00–06:00 local time except the two
 daily anchor checks, plus a small per-entry stagger so installs don't all
-poll on the same second. See `carrier-research/dynamic-polling.md` for the
-full algorithm and `ha-carrier-template`'s `coordinator.py` for the reference
-shape this mirrors.
+poll on the same second. See `ha-carrier-template`'s `coordinator.py` for the
+reference shape this mirrors.
 
 ## Divergences from the scaffold
 
