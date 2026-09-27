@@ -61,6 +61,7 @@ _STATUS_MAP: dict[str, ParcelStatus] = {
     "COLLECTED": ParcelStatus.IN_TRANSIT,
     "AT_TERMINAL": ParcelStatus.IN_TRANSIT,
     "OUT_FOR_DELIVERY": ParcelStatus.OUT_FOR_DELIVERY,
+    "DELIVERING": ParcelStatus.OUT_FOR_DELIVERY,
     "READY_FOR_PICKUP": ParcelStatus.AT_PICKUP_POINT,
     "DELIVERED": ParcelStatus.DELIVERED,
     "RETURNED": ParcelStatus.RETURNING,

@@ -42,6 +42,7 @@ from .payloads import active_sample, delivered_sample, event, pickup_sample
         ("REGISTERED", ParcelStatus.REGISTERED),
         ("IN_TRANSIT", ParcelStatus.IN_TRANSIT),
         ("OUT_FOR_DELIVERY", ParcelStatus.OUT_FOR_DELIVERY),
+        ("DELIVERING", ParcelStatus.OUT_FOR_DELIVERY),
         ("READY_FOR_PICKUP", ParcelStatus.AT_PICKUP_POINT),
         ("DELIVERED", ParcelStatus.DELIVERED),
         ("RETURNED", ParcelStatus.RETURNING),
