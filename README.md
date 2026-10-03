@@ -9,7 +9,7 @@
 
 A custom Home Assistant integration that tracks your [Helthjem](https://helthjem.no) parcels. Helthjem is a Norwegian home-delivery carrier (built on Amedia's newspaper-distribution network) that many Norwegian webshops use. No account is needed — you enter the parcel reference yourself, just like on Helthjem's own tracking page, and the integration reads the same keyless endpoint that page uses.
 
-> ⚠️ **Early release.** This integration was reconstructed from Helthjem's live tracking API without a real parcel to verify against, so the status vocabulary is still being confirmed. If you see an `unknown` status or a warning in the log asking you to report something, please [open an issue](https://github.com/ha-parcel-integrations/ha-helthjem/issues/new) — that is how the mapping is completed.
+> ⚠️ **Pre-1.0 release.** No real parcel has been tracked with this integration yet, so the status vocabulary is still being confirmed. If you see an `unknown` status or a warning in the log asking you to report something, please [open an issue](https://github.com/ha-parcel-integrations/ha-helthjem/issues/new) — that is how the mapping is completed.
 
 Part of the [ha-parcel-integrations](https://ha-parcel-integrations.github.io/) family: it publishes the same canonical parcel format, statuses and events as the other carrier integrations, so it plugs straight into the [Parcel Aggregator](https://github.com/ha-parcel-integrations/ha-parcel-aggregator) and cross-carrier automations.
 
