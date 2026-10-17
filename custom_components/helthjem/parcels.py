@@ -23,6 +23,7 @@ from homeassistant.config_entries import ConfigEntry
 from .const import (
     CONF_DELIVERED_FILTER_AMOUNT,
     CONF_DELIVERED_FILTER_TYPE,
+    CONFIRMED_DELIVERY_POINT_TYPES,
     DEFAULT_DELIVERED_FILTER_AMOUNT,
     DEFAULT_DELIVERED_FILTER_TYPE,
     HISTORY_MAX_EVENTS,
@@ -314,10 +315,11 @@ def normalize_parcel(raw: dict, *, include_history: bool = False) -> dict:
 
     service_point = raw.get("servicePoint") or {}
 
-    # Pre-release: surface the still-unconfirmed DeliveryPointType so a real
-    # parcel tells us its vocabulary (see _warn_observed_value).
+    # DOORMAT and MAILBOX are confirmed on real parcels; anything else is a
+    # value we have not seen, so only those two stay quiet.
     delivery_point = raw.get("deliveryPoint") or {}
-    _warn_observed_value("deliveryPoint.type", delivery_point.get("type"))
+    if delivery_point.get("type") not in CONFIRMED_DELIVERY_POINT_TYPES:
+        _warn_observed_value("deliveryPoint.type", delivery_point.get("type"))
 
     return {
         "carrier": "Helthjem",

@@ -18,7 +18,7 @@ you act in one of these areas:
 |---|---|
 | touch entities, sensors, config/options flow, coordinator, diagnostics, translations | *Home Assistant developer docs* (its table points on to the canonical HA page — don't rely on memory) |
 | add/rename a parcel field, a `ParcelStatus`, or a bus event; change the sort/first-refresh; touch unmapped-status logging | *Parcel contract* — key set, units, sort, events + suppression; `test_parcels.py::test_normalize_publishes_exactly_the_canonical_keys` guards the key set |
-| ship anything while below 1.0.0 (reconstructed, no real parcel) | *Pre-1.0 releases* — one-shot WARNINGs for every guessed enum/shape |
+| ship anything whose status or shape no real parcel has confirmed | *Pre-1.0 releases* — one-shot WARNINGs for every guessed enum/shape |
 | consider "fixing" a lint/pattern the skill flags (inline client) | *Deliberate skill divergences* |
 | commit, bump, tag, release, or write release notes; add a feature without a test | *Workflow / Commits / Versioning / Testing* |
 
@@ -57,12 +57,22 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
   `weight`/`dimensions` stay `None`; `planned_from` is a single date (`planned_to`
   always `None`). Reflected in `const.py`'s `CAPABILITIES` (feeds the docs
   site's comparison table) — keep the two in agreement if that ever changes.
-- **Provisional (pre-1.0):** the status vocabulary is a best-effort guess
-  collected via one-shot WARNINGs (introspection is off); `DeliveryPointType`
-  values are logged too since one may be a cleaner pickup signal than the status.
-  The `estimatedDelivery.date` **format** is unconfirmed — a value we can't parse
-  would silently become `None`, so `normalize_parcel` logs a one-shot WARNING when
-  a present date fails to parse. Confirm once a real parcel is observed end to end.
+- **Confirmed on real parcels (2026-10-17):** `REGISTERED`, `IN_TRANSIT`,
+  `DELIVERING` and `DELIVERED` on three doorstep parcels followed end to end,
+  with offset-aware `createdAt` timestamps (`+02:00`) so there is no naive-time
+  assumption here. `DELIVERING` is the real out-for-delivery value;
+  `OUT_FOR_DELIVERY` stays mapped but unseen. `DeliveryPointType` `DOORMAT` and
+  `MAILBOX` are confirmed and listed in `CONFIRMED_DELIVERY_POINT_TYPES`, so
+  only an unseen value still reports; neither is a pickup signal, so the status
+  remains the only route to `at_pickup_point`.
+- **Still unconfirmed:** the rest of the `EventStatusType` vocabulary
+  (`AT_TERMINAL`, `BOOKED`, `COLLECTED`, `DEVIATION`, `PRE_TRANSIT`,
+  `READY_FOR_PICKUP`, `RETURNED`), and the `estimatedDelivery.date` **format** —
+  it was null on all three parcels, and a value we can't parse would silently
+  become `None`, so `normalize_parcel` logs a one-shot WARNING when a present
+  date fails to parse. `servicePoint` was null throughout too; both fields stay
+  declared in `CAPABILITIES` because the mapping is implemented and every
+  captured parcel was a doorstep delivery.
 
 ## Dynamic, status-driven polling
 

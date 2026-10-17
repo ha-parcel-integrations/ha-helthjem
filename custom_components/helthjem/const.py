@@ -42,6 +42,10 @@ KNOWN_CAPABILITIES = frozenset(
 # never carries weight or dimensions.
 CAPABILITIES = frozenset({"delivery_window", "pickup_point", "url", "history"})
 
+# ``DeliveryPointType`` values seen on a real parcel, so they stop asking to be
+# reported. Both are doorstep drops rather than a pickup signal.
+CONFIRMED_DELIVERY_POINT_TYPES = frozenset({"DOORMAT", "MAILBOX"})
+
 # Helthjem's consumer tracking backend is a **keyless GraphQL endpoint** — the
 # same one https://helthjem.no/sporing/ calls. No account, no API key: the
 # parcel reference alone is the input.

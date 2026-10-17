@@ -231,6 +231,15 @@ def test_normalize_pickup_parcel():
     assert parcel["pickup_point"] == "Helthjem Hentepunkt Grünerløkka"
 
 
+def test_confirmed_delivery_point_types_are_silent(caplog):
+    """DOORMAT and MAILBOX were seen on real parcels, so they stop asking."""
+    for point_type in ("DOORMAT", "MAILBOX"):
+        raw = active_sample()
+        raw["deliveryPoint"] = {"type": point_type}
+        normalize_parcel(raw)
+    assert "deliveryPoint.type" not in caplog.text
+
+
 def test_normalize_warns_once_on_unconfirmed_delivery_point_type(caplog):
     """Pre-release: an observed DeliveryPointType is logged once for us to map."""
     raw = active_sample()
