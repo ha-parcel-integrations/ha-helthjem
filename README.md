@@ -5,13 +5,13 @@
 [![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> 📦 Part of [**ha-parcel-integrations**](https://ha-parcel-integrations.github.io/), a family of package-tracking integrations for Home Assistant that all publish the same parcel format, statuses and events, so they plug into cross-carrier automations and the optional [Parcel Aggregator](https://github.com/ha-parcel-integrations/ha-parcel-aggregator). Browse the other carriers on the website.
+>
 > 💬 Questions or feedback? Join the discussion on the [Home Assistant community](https://community.home-assistant.io/t/packages-postnl-dhl-nl-dpd-and-gls-parcel-integration/112433/).
 
 A custom Home Assistant integration that tracks your [Helthjem](https://helthjem.no) parcels. Helthjem is a Norwegian home-delivery carrier (built on Amedia's newspaper-distribution network) that many Norwegian webshops use. No account is needed — you enter the parcel reference yourself, just like on Helthjem's own tracking page, and the integration reads the same keyless endpoint that page uses.
 
 > ℹ️ A parcel's normal journey — registered, in transit, out for delivery, delivered — is confirmed against real parcels. Less common outcomes, such as a parcel held for collection or returned, have not been seen yet and log a warning asking you to report them; please [open an issue](https://github.com/ha-parcel-integrations/ha-helthjem/issues/new) if you see one.
-
-Part of the [ha-parcel-integrations](https://ha-parcel-integrations.github.io/) family: it publishes the same canonical parcel format, statuses and events as the other carrier integrations, so it plugs straight into the [Parcel Aggregator](https://github.com/ha-parcel-integrations/ha-parcel-aggregator) and cross-carrier automations.
 
 ## Contents
 
