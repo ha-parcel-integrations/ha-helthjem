@@ -15,6 +15,7 @@ relies on:
 * lets ``aiohttp.ClientError`` propagate untouched — ``DataUpdateCoordinator``
   already wraps those into ``UpdateFailed``.
 """
+
 from __future__ import annotations
 
 import logging
@@ -22,12 +23,7 @@ from typing import Any
 
 import aiohttp
 
-from .const import (
-    TRACKING_API_URL,
-    TRACKING_ORIGIN,
-    TRACKING_QUERY,
-    TRACKING_REFERER,
-)
+from .const import TRACKING_API_URL, TRACKING_ORIGIN, TRACKING_QUERY, TRACKING_REFERER
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,4 +1,5 @@
 """Tests for the Helthjem refresh button."""
+
 from unittest.mock import AsyncMock, MagicMock
 
 from custom_components.helthjem.button import HelthjemRefreshButton

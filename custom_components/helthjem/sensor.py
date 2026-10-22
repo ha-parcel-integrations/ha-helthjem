@@ -1,8 +1,9 @@
 """Sensor platform for the Helthjem parcel tracker integration."""
+
 from __future__ import annotations
 
-import logging
 from datetime import datetime
+import logging
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -30,7 +31,6 @@ _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = 0
 
 
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: HelthjemConfigEntry,
@@ -42,9 +42,7 @@ async def async_setup_entry(
     # than (too late) from this forwarded platform.
     coordinator = entry.runtime_data.coordinator
 
-    current_barcodes: set[str] = {
-        p.get("barcode", "") for p in coordinator.data or []
-    }
+    current_barcodes: set[str] = {p.get("barcode", "") for p in coordinator.data or []}
     entry_id = entry.entry_id
 
     # Remove per-parcel sensors from the registry whose barcode is no longer
@@ -65,7 +63,7 @@ async def async_setup_entry(
             and entity_entry.unique_id.startswith(f"{entry_id}_")
             and entity_entry.unique_id not in non_parcel_unique_ids
         ):
-            barcode = entity_entry.unique_id[len(f"{entry_id}_"):]
+            barcode = entity_entry.unique_id[len(f"{entry_id}_") :]
             if barcode not in current_barcodes:
                 registry.async_remove(entity_entry.entity_id)
 
@@ -75,10 +73,10 @@ async def async_setup_entry(
         ),
         HelthjemAwaitingPickupSensor(coordinator, entry),
     ]
-    for parcel in coordinator.data or []:
-        entities.append(
-            HelthjemParcelSensor(coordinator, entry, parcel.get("barcode", ""))
-        )
+    entities.extend(
+        HelthjemParcelSensor(coordinator, entry, parcel.get("barcode", ""))
+        for parcel in coordinator.data or []
+    )
     entities.append(HelthjemNextDeliverySensor(coordinator, entry))
     entities.append(HelthjemDeliveredParcelsSensor(coordinator, entry))
     entities.append(HelthjemLastUpdateSensor(coordinator, entry))
@@ -226,9 +224,7 @@ class HelthjemParcelSensor(CoordinatorEntity[HelthjemCoordinator], SensorEntity)
         return dict(parcel) if parcel else {}
 
 
-class HelthjemNextDeliverySensor(
-    CoordinatorEntity[HelthjemCoordinator], SensorEntity
-):
+class HelthjemNextDeliverySensor(CoordinatorEntity[HelthjemCoordinator], SensorEntity):
     """Earliest expected delivery datetime across all active parcels."""
 
     _attr_has_entity_name = True
@@ -236,9 +232,7 @@ class HelthjemNextDeliverySensor(
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_attribution = ATTRIBUTION
 
-    def __init__(
-        self, coordinator: HelthjemCoordinator, entry: ConfigEntry
-    ) -> None:
+    def __init__(self, coordinator: HelthjemCoordinator, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_next_delivery"
@@ -288,9 +282,7 @@ class HelthjemDeliveredParcelsSensor(
     _attr_attribution = ATTRIBUTION
     _unrecorded_attributes = frozenset({"parcels"})
 
-    def __init__(
-        self, coordinator: HelthjemCoordinator, entry: ConfigEntry
-    ) -> None:
+    def __init__(self, coordinator: HelthjemCoordinator, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_delivered_parcels"
@@ -307,9 +299,7 @@ class HelthjemDeliveredParcelsSensor(
         return {"parcels": self.coordinator.delivered}
 
 
-class HelthjemLastUpdateSensor(
-    CoordinatorEntity[HelthjemCoordinator], SensorEntity
-):
+class HelthjemLastUpdateSensor(CoordinatorEntity[HelthjemCoordinator], SensorEntity):
     """Diagnostic sensor reporting when Helthjem was last polled successfully."""
 
     _attr_has_entity_name = True
@@ -318,9 +308,7 @@ class HelthjemLastUpdateSensor(
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_attribution = ATTRIBUTION
 
-    def __init__(
-        self, coordinator: HelthjemCoordinator, entry: ConfigEntry
-    ) -> None:
+    def __init__(self, coordinator: HelthjemCoordinator, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_last_update"

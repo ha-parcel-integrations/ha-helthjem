@@ -10,6 +10,7 @@ them.
 Kept in one module rather than inline per test: when the real shape turns out to
 differ, there is then exactly one place to fix.
 """
+
 from __future__ import annotations
 
 from typing import Any

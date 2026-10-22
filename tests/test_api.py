@@ -1,4 +1,5 @@
 """Tests for the Helthjem GraphQL API client."""
+
 import json
 from unittest.mock import AsyncMock, MagicMock
 
