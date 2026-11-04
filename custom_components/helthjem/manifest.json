@@ -1,6 +1,7 @@
 {
   "domain": "helthjem",
   "name": "Helthjem",
+  "categories": ["productivity_information"],
   "codeowners": [
     "@peter-mdf"
   ],
