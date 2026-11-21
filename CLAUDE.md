@@ -54,8 +54,9 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
   `getParcelDetails`** — the latter carries weight/dimensions but returns a
   non-null object for an unknown reference, making it a poor not-found signal.
   Revisit if weight/dimensions become worth a second call. `sender`/`receiver`/
-  `weight`/`dimensions` stay `None`; `planned_from` is a single date (`planned_to`
-  always `None`). Reflected in `const.py`'s `CAPABILITIES` (feeds the docs
+  `weight`/`dimensions` stay `None`; the estimate is a single date or moment, which
+  `planned_window` (zone Europe/Oslo) turns into a whole-day window or a moment
+  stretched to 23:59:59. Reflected in `const.py`'s `CAPABILITIES` (feeds the docs
   site's comparison table) — keep the two in agreement if that ever changes.
 - **Confirmed on real parcels (2026-10-17):** `REGISTERED`, `IN_TRANSIT`,
   `DELIVERING` and `DELIVERED` on three doorstep parcels followed end to end,
@@ -65,6 +66,14 @@ webshops pick at checkout; overlaps with Bring/Posten and PostNord.
   `MAILBOX` are confirmed and listed in `CONFIRMED_DELIVERY_POINT_TYPES`, so
   only an unseen value still reports; neither is a pickup signal, so the status
   remains the only route to `at_pickup_point`.
+- **Pickup points:** Helthjem delivers to service points, so both
+  `awaiting_pickup` and `en_route_to_pickup_point` exist. `pickup` is
+  `is_pickup(bool(servicePoint), status, event statuses)`, so it stays true after
+  collection; `pickup_point` is the service point's name and only set when
+  `pickup`. No real service-point parcel has been seen yet (`READY_FOR_PICKUP`
+  and `servicePoint` are unconfirmed), so both sensors read 0 until one shows up.
+- **`delivered` is `status is DELIVERED`.** `RETURNED` maps to `returning` and
+  stays active: the payload has no back-at-sender signal.
 - **Still unconfirmed:** the rest of the `EventStatusType` vocabulary
   (`AT_TERMINAL`, `BOOKED`, `COLLECTED`, `DEVIATION`, `PRE_TRANSIT`,
   `READY_FOR_PICKUP`, `RETURNED`), and the `estimatedDelivery.date` **format** —

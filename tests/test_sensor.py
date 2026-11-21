@@ -7,6 +7,7 @@ from custom_components.helthjem.const import ParcelStatus
 from custom_components.helthjem.sensor import (
     HelthjemAwaitingPickupSensor,
     HelthjemDeliveredParcelsSensor,
+    HelthjemEnRouteToPickupPointSensor,
     HelthjemIncomingParcelsSensor,
     HelthjemLastUpdateSensor,
     HelthjemNextDeliverySensor,
@@ -68,6 +69,32 @@ def test_awaiting_pickup_zero_when_no_parcels():
     assert sensor.extra_state_attributes["parcels"] == []
 
 
+def test_en_route_counts_pickup_parcels_not_yet_arrived():
+    en_route = _parcel("ROUTE", ParcelStatus.IN_TRANSIT, pickup=True)
+    arrived = _parcel("HERE", ParcelStatus.AT_PICKUP_POINT, pickup=True)
+    returning = _parcel("BACK", ParcelStatus.RETURNING, pickup=True)
+    home = _parcel("HOME", ParcelStatus.IN_TRANSIT, pickup=False)
+    coordinator = _coordinator([en_route, arrived, returning, home])
+    en_route_sensor = HelthjemEnRouteToPickupPointSensor(coordinator, _entry())
+    awaiting_sensor = HelthjemAwaitingPickupSensor(coordinator, _entry())
+    assert [
+        p["barcode"] for p in en_route_sensor.extra_state_attributes["parcels"]
+    ] == ["ROUTE"]
+    assert en_route_sensor.native_value == 1
+    assert awaiting_sensor.native_value == 1
+
+
+def test_next_delivery_skips_a_window_that_has_ended():
+    coordinator = _coordinator(
+        [
+            _parcel("OLD", planned_from="2000-05-01T10:00:00Z"),
+            _parcel("NEW", planned_from="2099-05-01T10:00:00Z"),
+        ]
+    )
+    sensor = HelthjemNextDeliverySensor(coordinator, _entry())
+    assert sensor.extra_state_attributes["barcode"] == "NEW"
+
+
 def test_parcel_sensor_status_and_attributes():
     parcel = _parcel("A", status=ParcelStatus.OUT_FOR_DELIVERY)
     sensor = HelthjemParcelSensor(_coordinator([parcel]), _entry(), "A")
@@ -84,12 +111,12 @@ def test_parcel_sensor_missing_barcode():
 def test_next_delivery_picks_earliest():
     coordinator = _coordinator(
         [
-            _parcel("A", planned_from="2026-05-02T10:00:00Z"),
-            _parcel("B", planned_from="2026-05-01T10:00:00Z"),
+            _parcel("A", planned_from="2099-05-02T10:00:00Z"),
+            _parcel("B", planned_from="2099-05-01T10:00:00Z"),
         ]
     )
     sensor = HelthjemNextDeliverySensor(coordinator, _entry())
-    assert sensor.native_value == datetime(2026, 5, 1, 10, 0, tzinfo=UTC)
+    assert sensor.native_value == datetime(2099, 5, 1, 10, 0, tzinfo=UTC)
     assert sensor.extra_state_attributes["barcode"] == "B"
 
 
@@ -103,7 +130,7 @@ def test_next_delivery_skips_unparseable_moment():
     coordinator = _coordinator(
         [
             _parcel("A", planned_from="not-a-date"),
-            _parcel("B", planned_from="2026-05-01T10:00:00Z"),
+            _parcel("B", planned_from="2099-05-01T10:00:00Z"),
         ]
     )
     sensor = HelthjemNextDeliverySensor(coordinator, _entry())

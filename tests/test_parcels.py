@@ -220,13 +220,13 @@ def test_capabilities_are_known_values():
     assert CAPABILITIES <= KNOWN_CAPABILITIES
 
 
-def test_normalize_active_parcel_has_point_eta():
-    """Helthjem reports a single estimated date, never a window."""
+def test_normalize_active_parcel_stretches_its_eta_to_the_end_of_the_day():
+    """Helthjem reports a single estimate; it runs until the end of that Oslo day."""
     parcel = normalize_parcel(active_sample())
     assert parcel["status"] == ParcelStatus.OUT_FOR_DELIVERY
     assert parcel["delivered"] is False
     assert parcel["planned_from"] == "2026-04-29T13:00:00Z"
-    assert parcel["planned_to"] is None  # never a window
+    assert parcel["planned_to"] == "2026-04-29T23:59:59+02:00"
 
 
 def test_normalize_pickup_parcel():
