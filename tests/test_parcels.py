@@ -163,6 +163,7 @@ CANONICAL_KEYS = [
     "barcode",
     "sender",
     "receiver",
+    "contents",
     "status",
     "raw_status",
     "delivered",
@@ -191,6 +192,7 @@ def test_normalize_delivered_parcel():
     # Helthjem's tracking type exposes neither sender nor receiver name.
     assert parcel["sender"] is None
     assert parcel["receiver"] is None
+    assert parcel["contents"] is None
     assert parcel["status"] == ParcelStatus.DELIVERED
     # raw_status is Helthjem's own status enum value.
     assert parcel["raw_status"] == "DELIVERED"

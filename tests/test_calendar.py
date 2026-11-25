@@ -135,3 +135,21 @@ def test_a_stretched_moment_stays_a_timed_event():
         ]
     )
     assert isinstance(cal._events()[0].start, datetime)
+
+
+def test_contents_is_the_event_title():
+    parcel = _parcel("A", planned_from="2099-01-01T10:00:00Z")
+    parcel["contents"] = "Garden hose"
+    assert _cal([parcel])._events()[0].summary == "Garden hose"
+
+
+def test_title_falls_back_to_sender_without_contents():
+    parcel = _parcel("A", planned_from="2099-01-01T10:00:00Z")
+    parcel["contents"] = None
+    assert _cal([parcel])._events()[0].summary == "Example Sender"
+
+
+def test_title_keeps_the_old_fallback_without_contents_or_sender():
+    parcel = _parcel("A", planned_from="2099-01-01T10:00:00Z")
+    parcel["sender"] = None
+    assert _cal([parcel])._events()[0].summary == "Parcel A"

@@ -95,6 +95,13 @@ def test_next_delivery_skips_a_window_that_has_ended():
     assert sensor.extra_state_attributes["barcode"] == "NEW"
 
 
+def test_next_delivery_carries_the_contents():
+    parcel = _parcel("A", planned_from="2099-05-01T10:00:00Z")
+    parcel["contents"] = "Running shoes"
+    sensor = HelthjemNextDeliverySensor(_coordinator([parcel]), _entry())
+    assert sensor.extra_state_attributes["contents"] == "Running shoes"
+
+
 def test_parcel_sensor_status_and_attributes():
     parcel = _parcel("A", status=ParcelStatus.OUT_FOR_DELIVERY)
     sensor = HelthjemParcelSensor(_coordinator([parcel]), _entry(), "A")

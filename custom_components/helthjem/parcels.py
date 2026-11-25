@@ -446,6 +446,7 @@ def normalize_parcel(raw: dict, *, include_history: bool = False) -> dict:
         # Helthjem's tracking type exposes neither sender nor receiver name.
         "sender": None,
         "receiver": None,
+        "contents": None,
         "status": status,
         "raw_status": status_code,
         "delivered": delivered,

@@ -298,6 +298,7 @@ class HelthjemNextDeliverySensor(CoordinatorEntity[HelthjemCoordinator], SensorE
             "barcode": earliest.get("barcode"),
             "sender": earliest.get("sender"),
             "receiver": earliest.get("receiver"),
+            "contents": earliest.get("contents"),
         }
 
 
